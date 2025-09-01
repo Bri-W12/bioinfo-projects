@@ -1,7 +1,12 @@
 # Assignment for Week 
 
-Answers to Questions
-5. samtools 1.22.1
+Answers to Questions 
+
+
+My version of samtools is 1.22.1
+
+    samtools version
+
 6. To make a nested directory:
 mkdir edu
 cd edu
