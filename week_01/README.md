@@ -25,7 +25,9 @@ To make projects in different directories:
     touch sequences_readme.md
 
 Relative: 
+
     cat projects/project_readme.md
 Absolute: 
+
     /Users/biouser/edu/projects/project_readme.md
 
