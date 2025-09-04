@@ -58,6 +58,10 @@ Answer: The top ten most annotated feature types are exons, CDS, biological regi
 
 Answer: After doing some research, I do believe that this is a complete and well-annotated GFF file. Cats have approximately 20,000 genes, so 19209 annotated genes is very close to that number. I believe that the number of exons also makes sense, as eukaryotes tend to have multiple exons per gene.
 
+## Other Insights 
+
+I thought it was interesting that the number of annotated genes in cats (~19k) is similar to the number of protein-coding genes in humans and dogs. 
+
     
 
     
