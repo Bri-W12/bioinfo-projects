@@ -5,6 +5,7 @@
 ## Genome Size and Features
 
 The genome is 4641652 base pairs long. 
+
     wget https://ftp.ensemblgenomes.ebi.ac.uk/pub/bacteria/current/fasta/bacteria_0_collection/escherichia_coli_str_k_12_substr_mg1655_gca_000005845/dna/Escherichia_coli_str_k_12_substr_mg1655_gca_000005845.ASM584v2.dna.toplevel.fa.gz
     gunzip Escherichia_coli_str_k_12_substr_mg1655_gca_000005845.ASM584v2.dnatoplevel.fa.gz
     mv Escherichia_coli_str_k_12_substr_mg1655_gca_000005845.ASM584v2.dnatoplevel.fa ecoli.fa
@@ -14,6 +15,7 @@ The genome is 4641652 base pairs long.
     grep "##sequence-region" ecoli.gff
     
 Features 
+
     grep -v '^#' ecoli.gff | cut -f3 | sort | uniq -c | sort -nr
 
 Output
