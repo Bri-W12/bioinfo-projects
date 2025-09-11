@@ -46,5 +46,6 @@ Since the simplified file only contains genes/transcripts there are open spaces 
 
 In the image, you can see the "fish bones" running left to right for the gene thrL. On the sequence track, the arrow is also pointing to the right, so the sequences are running in the same direction. The gene, thrL, starts with a start codon (methionine) and ends with a stop codon. 
 
-    ![IGV Screenshot](igv_screenshot.png)
+    ![IGV Screenshot](week_03/igv_screenshot.png)
 
+ 
