@@ -19,6 +19,7 @@ Features
     grep -v '^#' ecoli.gff | cut -f3 | sort | uniq -c | sort -nr
 
 Output
+
     4558 exon
     4242 mRNA
     4242 CDS
