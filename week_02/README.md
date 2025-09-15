@@ -37,7 +37,7 @@ Answer: One of the features that showed up was snRNA. I have heard of snRNAs bef
 
 ## Top 10 Most Annotated Feature Types
 
-   cat catus.gff3 | cut -f 3 | sort | uniq -c | sort -rn | head
+    cat catus.gff3 | cut -f 3 | sort | uniq -c | sort -rn | head
 
 Output:
    
