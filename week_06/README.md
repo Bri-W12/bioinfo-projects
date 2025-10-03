@@ -117,8 +117,11 @@ This is not a necessary step, but it will help by removing files if the code nee
 
 This code defines "all" and then lets you run the code by simply typing "make run". 
 
-   all: get_genome get_srr download_reads fastqc index_genome align alignment_stats
-   run: all
+    all: 
+    get_genome get_srr download_reads fastqc index_genome align alignment_stats
+    
+    run: 
+    all
 
 # Alignment Statistics for BAM file
 
