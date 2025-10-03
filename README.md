@@ -1,2 +1,3 @@
-## bioinfo-projects
+## Bioinformatics Projects
+
 Assignments for BMMB 852
