@@ -1,2 +1,2 @@
-# bioinfo-projects
-Assignments for bioinfo BMMB852
+## bioinfo-projects
+Assignments for BMMB 852
