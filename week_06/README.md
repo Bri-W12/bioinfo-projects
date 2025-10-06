@@ -42,7 +42,7 @@ Use the following code to run FastQC. FastQC is a quality control tool for FASTQ
 
 This code uses BWA to build an index of the reference genome. This index will be used to help align the RNA-seq reads to the genome. 
 
-   make index_genome
+    make index_genome
 
 # Align the reads and convert to BAM
 
