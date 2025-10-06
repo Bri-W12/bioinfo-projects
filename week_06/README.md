@@ -1,127 +1,78 @@
 ## Assignment for Week 6
 
-# Answers to Questions
+# How to run the Makefile
 
-# Makefiles
+This pipeline allows you to: obtain a reference genome, download sequencing reads from the SRA, create a quality report, index the genome, and align the reads.
 
-In the Makefile, I had to set the variables shown below. This makes coding easily reproducible because the variable can be changed witout rewriting the entire code.
+These tasks are set as "targets" within the Makefile, allowing them to be executed individually or run together.
 
-    # Accession number for the reference genome
-    RF=NC_007793.1
+# Get Genome
 
-    # Bioproject ID
-    PRR=PRJNA887926
+Run the following code to use the accession number to get the reference genome in FASTA and GFF format
 
-    # SRR Number
-    SRR=SRR21835896
+    make get_genome
 
-    # Output directory for SRR reads
-    DIR=reads
+# Get Bioproject
 
-    # Output directory for FastQC results
-    DIR2=qc
+Run the following code to get the SRR numbers associated with the bioproject
 
-    # Read 1
-    R1=reads/${SRR}_1.fastq
-
-    # Read 2
-    R2=reads/${SRR}_2.fastq
-
-    # Reference fasta
-    REF=${RF}.fna
-
-    # Output BAM file
-    BAM=alignments/${SRR}.bam
-
-# Get reference genome in FASTA and GFF format
-
-The code below was used to get the reference genome for Staphylococcus aureus. This is needed for future viewing and annotation in IGV. 
-
-    get_genome:
-	bio fetch ${RF} -format fasta > ${RF}.fna
-	bio fetch ${RF} -format gff > ${RF}.gff
-
-
-# Retrieving data from Bioproject ID (fetch all SRRs)
-
-For this bioproject, there are numerous SRRs because there are numerous sequencing runs. This is an RNA-seq dataset, so there are numerous replicates and controls. 
-
-
-    get_bioproject:
-	mkdir -p ${DIR}
-	for srr in $$(esearch -db sra -query ${PRR} | efetch -format runinfo | cut -d ',' -f 1 | grep SRR); do \
-		echo "Fetching $$srr"; \
-		bio fetch $$srr; \
-	done
+    make get_bioproject
 
 # Retrieving data from one SRR
 
-The code below can be used to retrieve the data from one SRR. The variable could be changed to allow for retrieval from other SRRs. 
+Run the following code to retrieve the data from one SRR and create a directory for the output
 
-    get_srr:
-	mkdir -p ${DIR}
-	bio fetch ${SRR}
+    make get_srr
+
 
 # Download first 1000 reads from SRR and get stats
 
-This code downloads the first 1000 reads from the SRR and gets the stats of the reads. If it’s paired-end sequencing, the code will split into two files (_1.fastq and _2.fastq). Seqkit stats will summarize FASTQ file statistics. 
+Run the following code to download the first 1000 reads from the SRR and gets the stats of the reads. If it’s paired-end sequencing, the code will split into two files (_1.fastq and _2.fastq). Seqkit stats will summarize FASTQ file statistics. 
 
-
-    download_reads:
-	fastq-dump -X 1000 -F --outdir reads --split-files ${SRR}
-	seqkit stats reads/${SRR}_1.fastq reads/${SRR}_2.fastq > reads/${SRR}_stats.txt
-	cat reads/${SRR}_stats.txt
+    make download_reads
 
 # Run FastQC on the reads 
 
-FastQC is a quality control tool for FASTQ sequencing reads and produces a report about data quality. The HTML file can be opened in the browser to see the results. This code makes a directory to store the FastQC data and then also runs FastQC.
+Use the following code to run FastQC. FastQC is a quality control tool for FASTQ sequencing reads and produces a report about data quality. The HTML file can be opened in the browser to see the results. This code makes a directory to store the FastQC data and then also runs FastQC.
 
-
-    fastqc:
-	mkdir -p ${DIR2}
-	fastqc -o ${DIR2} reads/${SRR}_1.fastq reads/${SRR}_2.fastq
+    make fastqc
+	
 
 # Index the reference genome for alignment
 
 This code uses BWA to build an index of the reference genome. This index will be used to help align the RNA-seq reads to the genome. 
 
-    index_genome:
-	bwa index ${RF}.fna
-	samtools faidx ${RF}.fna
+   make index_genome
 
 # Align the reads and convert to BAM
 
 This code creates an output directory for the BAM files. Bwa mem is the aligner that will align the reads to the genome. This creates a bam index file (bai).
 
-    align:
-	mkdir -p $(dir ${BAM})
-	bwa mem -t 4 ${REF} ${R1} ${R2} | samtools sort  > ${BAM}
-	samtools index ${BAM}
+    make align
+
 
 # Generate alignment statistics
 
 This code checks the quality of the alignment. It can check how many total reads there are, how many reads are mapped, as well as other information. 
 
-    alignment_stats:
-	samtools flagstat ${BAM} > ${BAM}_stats.txt
-	cat ${BAM}_stats.txt
+   make alignment_stats
+
 
 # Clean up generated files
 
 This is not a necessary step, but it will help by removing files if the code needs rerun. This was helpful when I was troubleshooting, as I did not have duplicate files. 
 
-    clean:
-	rm -rf ${REF} ${R1} ${R2} ${BAM} ${BAM}.bai
+    make clean
 
-# Run everything and shortcut to run everything
+# Run everything 
 
-This code defines "all" and then lets you run the code by simply typing "make run". 
+    make run
 
-    all: 
-    get_genome get_srr download_reads fastqc index_genome align alignment_stats
-    
-    run: 
-    all
+# Customization
+
+The Makefile can be customized for your own uses. The genome as well as other variables can be changed by editing the top of the Makefile. For example, this reference genome could be changed to your organism of interest.
+
+     RF=NC_007793.1
 
 # Alignment Statistics for BAM file
 
