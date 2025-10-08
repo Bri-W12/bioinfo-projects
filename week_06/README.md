@@ -55,7 +55,7 @@ This code creates an output directory for the BAM files. Bwa mem is the aligner 
 
 This code checks the quality of the alignment. It can check how many total reads there are, how many reads are mapped, as well as other information. 
 
-   make alignment_stats
+    make alignment_stats
 
 
 # Clean up generated files
