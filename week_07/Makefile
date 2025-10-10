@@ -123,18 +123,16 @@ alignment_stats:
 
 # Generate temporary bedgraph file
 bam_to_bedgraph:
-
 	LC_ALL=C; bedtools genomecov -ibam  ${BAM} -split -bg | \
-    sort -k1,1 -k2,2n > ${BG}
+	sort -k1,1 -k2,2n > ${BG}
 
 # Turn bedgraph file into a bigWig file
 bedgraph_to_bigwig: 
-	
 	bedGraphToBigWig ${BG} ${REF}.fai ${BW}
 
 # Samtools depth to calculate area with highest coverage
 depth:
-	samtools depth ${BAM} | sort -k,3nr | head -n 1
+	-samtools depth ${BAM} | sort -k3nr | head -n 1
 
 # Clean up generated files
 clean:
