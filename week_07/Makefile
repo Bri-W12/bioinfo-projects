@@ -134,7 +134,7 @@ bedgraph_to_bigwig:
 
 # Samtools depth to calculate area with highest coverage
 depth:
-    samtools depth ${BAM} | sort -k,3nr | head -n 1
+	samtools depth ${BAM} | sort -k,3nr | head -n 1
 
 # Clean up generated files
 clean:
