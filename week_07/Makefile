@@ -7,7 +7,7 @@ RF=NC_007793.1
 PRR=PRJNA887926
 
 # SRR Number
-SRR=DRR660590
+SRR=SRR21835896
 
 # Output directory for SRR reads
 DIR=reads
