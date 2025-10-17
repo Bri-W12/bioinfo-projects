@@ -3,6 +3,9 @@
 # Accession number for the reference genome
 RF=NC_007793.1
 
+# Name for the reference genome
+GENOME_NAME=Staphaureus
+
 # Bioproject ID
 PRR=PRJNA887926
 
@@ -13,7 +16,7 @@ DIR=reads
 DIR2=qc
 
 # Reference fasta
-REF=${RF}.fna
+REF=${GENOME_NAME}.fna
 
 # The temporary bedgraph and bigwig files
 BG = ${BAM_DIR}/${SRR}.bedgraph
@@ -44,8 +47,8 @@ MAKEFLAGS += --no-builtin-rules
 # Get reference genome in fasta and gff format
 get_genome:
 	@echo "Fetching genome ${RF} in fasta and gff format"
-	bio fetch ${RF} -format fasta > ${RF}.fna
-	bio fetch ${RF} -format gff > ${RF}.gff
+	bio fetch ${RF} -format fasta > ${GENOME_NAME}.fna
+	bio fetch ${RF} -format gff > ${GENOME_NAME}.gff
 
 # Get metadata for BioProject
 get_bioproject:
@@ -61,20 +64,20 @@ get_sample_names:
 get_design:
 	@echo "Connecting SRR numbers to Sample names in design.csv"
 	cat design.csv | parallel -j 1 --colsep , --header : \
-	make all SRR={SRR_numbers} SAMPLE={sample_names}
+	make per_sample SRR={SRR_numbers} SAMPLE={sample_names}
 
 # Get data from SRRs using parallel
 get_srrs:
 	@echo "Fetching SRR data for each SRR in design.csv"
 	mkdir -p ${DIR}
-	cat design.csv | tail -n +2 | parallel -j 1 --colsep , --header : \
+	cat design.csv | parallel -j 1 --colsep , --header : \
 	'bio fetch {SRR_numbers} -o reads/{SRR_numbers}_{sample_names}'
 
 # Download 10000 reads from each SRR and get stats
 download_reads:
 	@echo "Downloading 10000 reads for each SRR"
 	mkdir -p ${DIR}
-	cat design.csv | tail -n +2 | parallel -j 1 --colsep , --header : \
+	cat design.csv | parallel -j 1 --colsep , --header : \
 		'echo "Fetching {SRR_numbers} ({sample_names})"; \
 		 fastq-dump -X 10000 -F --outdir reads --split-files {SRR_numbers}; \
 		 seqkit stats reads/{SRR_numbers}_1.fastq reads/{SRR_numbers}_2.fastq > reads/{SRR_numbers}_{sample_names}_stats.txt; \
@@ -85,7 +88,7 @@ download_reads:
 fastqc:
 	@echo "Running FastQC on all reads"
 	mkdir -p ${DIR2}
-	cat design.csv | tail -n +2 | parallel -j 1 --colsep , --header : \
+	cat design.csv | parallel -j 1 --colsep , --header : \
 	'fastqc -o ${DIR2} reads/{SRR_numbers}_1.fastq reads/{SRR_numbers}_2.fastq'
 
 # Index the reference genome for alignment
@@ -98,7 +101,7 @@ index_genome:
 align:
 	@echo "Aligning reads to reference genome and converting to BAM"
 	mkdir -p bam
-	cat design.csv | tail -n +2 | parallel --colsep , --header : \
+	cat design.csv | parallel --colsep , --header : \
 	'bwa mem -t 4 ${REF} reads/{SRR_numbers}_1.fastq reads/{SRR_numbers}_2.fastq | \
 	samtools sort > bam/{SRR_numbers}.bam; \
 	samtools index bam/{SRR_numbers}.bam'
@@ -106,21 +109,21 @@ align:
 # Generate alignment statistics
 alignment_stats:
 	@echo "Generating alignment statistics for all BAM files"
-	cat design.csv | tail -n +2 | parallel --colsep , --header : \
+	cat design.csv | parallel --colsep , --header : \
 	'samtools flagstat bam/{SRR_numbers}.bam > bam/{SRR_numbers}_bam_stats.txt; \
 	cat bam/{SRR_numbers}_bam_stats.txt'
 
 # Generate BedGraph coverage files
 bam_to_bedgraph:
 	@echo "Generating bedGraph coverage files for all BAMs"
-	cat design.csv | tail -n +2 | parallel --colsep , --header : \
+	cat design.csv | parallel --colsep , --header : \
 	'bedtools genomecov -ibam bam/{SRR_numbers}.bam -split -bg | \
 	sort -k1,1 -k2,2n > bam/{SRR_numbers}.bedgraph'
 	
 # Convert BedGraph to BigWig
 bedgraph_to_bigwig:
 	@echo "Converting bedGraph files to BigWig format"
-	cat design.csv | tail -n +2 | parallel --colsep , --header : \
+	cat design.csv | parallel --colsep , --header : \
 	'bedGraphToBigWig bam/{SRR_numbers}.bedgraph ${REF}.fai bam/{SRR_numbers}.bw'
 
 # Clean up generated files
@@ -131,11 +134,20 @@ clean:
 	rm -rf qc/*.html qc/*.zip
 	rm -f ${REF}.amb ${REF}.ann ${REF}.bwt ${REF}.pac ${REF}.sa ${REF}.fai
 
-# Per sample workflow (runs for each SRR)
-per_sample: get_srrs download_reads fastqc align alignment_stats bam_to_bedgraph bedgraph_to_bigwig
+# Run per-sample commands
+per_sample:
+	@echo "Processing $(SRR) ($(SAMPLE))"
+	# Example: download reads for this sample
+	fastq-dump -X 10000 -F --outdir reads --split-files $(SRR)
+	seqkit stats reads/$(SRR)_1.fastq reads/$(SRR)_2.fastq > reads/$(SRR)_$(SAMPLE)_stats.txt
+
+# Run all samples in parallel (calls per_sample for each row)
+per_sample_all:
+	@echo "Running per-sample workflows for all SRRs in design.csv"
+	cat design.csv | parallel -j 1 --colsep , --header : \
+		make per_sample SRR={SRR_numbers} SAMPLE={sample_names}
 
 # Run everything
-all: get_genome get_bioproject get_sample_names get_design
+run: get_genome get_bioproject get_sample_names get_design get_srrs download_reads fastqc index_genome align alignment_stats bam_to_bedgraph bedgraph_to_bigwig
 
-# Shortcut to run everything
-run: all
+
