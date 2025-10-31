@@ -54,5 +54,5 @@ This command merges all of the VCF files for each sample.
 
 This is the screenshot from the visualization of the merged VCF of the 3 untreated samples and the 3 treated samples. There are three variants shown, two in sample NT1, and one in sample NaP1.
 
-![IGV screenshot for merged vcf](mergedvcf_IGV/png)
+![IGV screenshot for merged vcf](mergedvcf_IGV.png)
 
