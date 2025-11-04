@@ -12,23 +12,11 @@ This is the revised code from the assignment from Week 8. For additional informa
 
 ## Running a Single Sample
 
-At the top of the makefile, input the SRR number and sample ID into the variables. 
+To run the Makefile for a single sample, input the code as shown below. The design.csv can be used to identify which sample names correspond to each SRR number. 
 
-    SRR=SRR21835898
-    SAMPLE=NT1
+    make get_srr SRR=SRR21835898 SAMPLE=NT1
 
-This will be used to name the files based on the sample name, instead of the SRR number.
-
-Run the following steps once for your single sample.
-
-    make get_srr
-    make download_reads
-    make fastqc
-    make align
-    make alignment_stats
-    make bam_to_bedgraph
-    make bedgraph_to_bigwig
-    
+This process can be repeated for the other steps within the Makefile. These steps will name the files based on the sample name, instead of the SRR number.
 
 ## Running Samples in Parallel (Dry run)
 
