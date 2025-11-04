@@ -12,6 +12,9 @@ PRR=PRJNA887926
 # SRR Number
 SRR=SRR21835898
 
+# Sample Name
+SAMPLE=NT1
+
 # Output directory for SRR reads
 DIR=reads
 
@@ -22,20 +25,20 @@ DIR2=qc
 REF=${GENOME_NAME}.fna
 
 # Read 1
-R1=reads/${SRR}_1.fastq
+R1=reads/${SAMPLE}_1.fastq
 
 # Read 2
-R2=reads/${SRR}_2.fastq
+R2=reads/${SAMPLE}_2.fastq
 
 # Output BAM file
-BAM=bam/${SRR}.bam
+BAM=bam/${SAMPLE}.bam
 
 # Output directory for BAM, bedgraph, and bigwig files
 BAM_DIR=bam
 
 # The temporary bedgraph and bigwig files
-BG = ${BAM_DIR}/${SRR}.bedgraph
-BW = ${BAM_DIR}/${SRR}.bw
+BG = ${BAM_DIR}/${SAMPLE}.bedgraph
+BW = ${BAM_DIR}/${SAMPLE}.bw
 
 # Add this to every Makefile.
 
@@ -80,13 +83,15 @@ get_srr:
 download_reads:
 	@echo "Downloading 10000 reads from ${SRR} and getting stats"
 	fastq-dump -X 10000 --outdir reads --split-files $(SRR)
-	seqkit stats reads/$(SRR)_1.fastq reads/$(SRR)_2.fastq > reads/$(SRR)_stats.txt
+	mv ${DIR}/${SRR}_1.fastq ${DIR}/${SAMPLE}_1.fastq
+	mv ${DIR}/${SRR}_2.fastq ${DIR}/${SAMPLE}_2.fastq
+	seqkit stats ${DIR}/${SAMPLE}_1.fastq ${DIR}/${SAMPLE}_2.fastq > ${DIR}/${SAMPLE}_stats.txt
 
 # Run FastQC on the reads
 fastqc:
 	@echo "Running FastQC on all reads"
 	mkdir -p ${DIR2}
-	fastqc -o ${DIR2} reads/${SRR}_1.fastq reads/${SRR}_2.fastq
+	fastqc -o ${DIR2} ${DIR}/${SAMPLE}_1.fastq ${DIR}/${SAMPLE}_2.fastq
 
 # Index the reference genome for alignment
 index_genome:
