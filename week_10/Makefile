@@ -9,12 +9,6 @@ GENOME_NAME=Staphaureus
 # Bioproject ID
 PRR=PRJNA887926
 
-# SRR Number
-SRR=SRR21835898
-
-# Name of the Sample
-SAMPLE=NT1
-
 # Output directory for SRR reads
 DIR=reads
 

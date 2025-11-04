@@ -21,15 +21,9 @@ Run these commands once, as you only to download and index the reference genome 
 
 ## Run for each SRR and Sample
 
-After downloading and indexing the reference genome once, only certain steps of the Makefile need to be run for each SRR and Sample. Using the design.csv, change the SRR= and SAMPLE= at the top of the Makefile to the correct names. Then, run the following commands per each sample.
+After downloading and indexing the reference genome once, only certain steps of the Makefile need to be run for each SRR and Sample. Using the design.csv, change the SRR= and SAMPLE= to run each sample. 
 
-    make get_srr
-    make download_reads
-    make fastqc
-    make align
-    make bam_to_bedgraph
-    make bedgraph_to_bigwig
-    make vcf
+    make get_srr SRR=SRR21835898 SAMPLE=NT1
 
 ## Visualizing the VCF for Sample=NT1
 
