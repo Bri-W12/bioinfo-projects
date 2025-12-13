@@ -67,6 +67,11 @@ gff_to_gtf:
 	@echo "Converting GFF to GTF for ${GENOME_NAME}"
 	gffread ${GENOME_NAME}.gff -T -o ${GENOME_NAME}.gtf
 
+fix_gtf:
+	@echo "Fixing gene_id fields for ${GENOME_NAME}.gtf"
+	sed -E 's/transcript_id "gene-([^"]+)";/gene_id "\1"; transcript_id "\1";/' \
+		${GENOME_NAME}.gtf > ${GENOME_NAME}.fixed.gtf
+
 # Get metadata for BioProject
 get_bioproject:
 	@echo "Fetching metadata for bioproject ${PRR}"
@@ -78,10 +83,10 @@ get_srr:
 	mkdir -p ${DIR}
 	bio fetch ${SRR}
 
-# Download 10000 reads from SRR and get stats
+# Download 150000 reads from SRR and get stats
 download_reads:
-	@echo "Downloading 10000 reads from ${SRR} and getting stats"
-	fastq-dump -X 10000 --outdir reads --split-files $(SRR)
+	@echo "Downloading 150000 reads from ${SRR} and getting stats"
+	fastq-dump -X 150000 --outdir reads --split-files $(SRR)
 	mv ${DIR}/${SRR}_1.fastq ${DIR}/${SAMPLE}_1.fastq
 	mv ${DIR}/${SRR}_2.fastq ${DIR}/${SAMPLE}_2.fastq
 	seqkit stats ${DIR}/${SAMPLE}_1.fastq ${DIR}/${SAMPLE}_2.fastq > ${DIR}/${SAMPLE}_stats.txt
@@ -123,28 +128,41 @@ bedgraph_to_bigwig:
 
 # Determine feature counts using featureCounts
 feature_counts:
-	@echo "Calculating feature counts for ${BAM}"
-	featureCounts -p -a ${GENOME_NAME}.gtf -o ${BAM_DIR}/feature_counts.txt ${BAM}
+	@echo "Calculating feature counts for ${SAMPLE}"
+	featureCounts -p \
+		-t CDS \
+		-g gene_id \
+		-a ${GENOME_NAME}.fixed.gtf \
+		-o ${BAM_DIR}/${SAMPLE}.feature_counts.txt \
+		${BAM}
+
 
 # Format feature counts into a count matrix using R script
 format_counts:
-	@echo "Formatting feature counts into count matrix"
-	micromamba run -n stats Rscript src/r/format_featurecounts.r -c ${BAM_DIR}/feature_counts.txt -o ${BAM_DIR}/${SAMPLE}_count_matrix.csv
+	@echo "Formatting feature counts for ${SAMPLE}"
+	micromamba run -n stats Rscript src/r/format_featurecounts.r \
+		-c ${BAM_DIR}/${SAMPLE}.feature_counts.txt \
+		-o ${BAM_DIR}/${SAMPLE}_count_matrix.csv
 
 # Process the counts.csv using edger
 process_counts:
 	@echo "Processing count matrix using edgeR"
 	micromamba run -n stats Rscript src/r/edger.r -d design.csv -c counts.csv
 
-# Evaluate the results
-evaluate_results:
-	@echo "Evaluating differential expression results"
-	micromamba run -n stats Rscript src/r/evaluate_results.r  -a counts.csv -b edger.csv
-
 # Generate PCA plot
 generate_pca:
 	@echo "Generating PCA plot from count matrix"
 	micromamba run -n stats Rscript src/r/plot_pca.r -c edger.csv -d design.csv -o pca.pdf
+
+# Generate heatmap
+generate_heatmap:
+	@echo "Generating heatmap from count matrix"
+	micromamba run -n stats Rscript src/r/plot_heatmap.r -c edger.csv -d design.csv -o heatmap.pdf
+
+# Identify differentially expressed genes
+differential_expression:
+	@echo "Identifying differentially expressed genes"
+	cat edger.csv | cut -f 1 -d ,  | head -10
 
 # Clean up generated files
 clean:
