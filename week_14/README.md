@@ -106,15 +106,15 @@ To run all of the codes associated with the Ensembl data, you can run:
 
 After running the make differential_expression_ensembl, I obtained this list of differentially expressed genes:
 
-   ENSB:O8cFsNVn-AOhAka
-   ENSB:3j5CatqyUbyE_RJ
-   ENSB:ORJr3f5Oc2q8UlJ
-   ENSB:TdSUffZ62X05q_0
-   ENSB:L76Ibya6B4Z_ELi
-   ENSB:CaRScD0kNwjveno
-   ENSB:XseMLxqqatMjUI7
-   ENSB:IsEgNezXK0ZAyVR
-   ENSB:Ujsrcn-GdePJHcP
+    ENSB:O8cFsNVn-AOhAka
+    ENSB:3j5CatqyUbyE_RJ
+    ENSB:ORJr3f5Oc2q8UlJ
+    ENSB:TdSUffZ62X05q_0
+    ENSB:L76Ibya6B4Z_ELi
+    ENSB:CaRScD0kNwjveno
+    ENSB:XseMLxqqatMjUI7
+    ENSB:IsEgNezXK0ZAyVR
+    ENSB:Ujsrcn-GdePJHcP
 
 
 
