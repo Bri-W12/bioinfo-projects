@@ -116,6 +116,22 @@ After running the make differential_expression_ensembl, I obtained this list of 
     ENSB:IsEgNezXK0ZAyVR
     ENSB:Ujsrcn-GdePJHcP
 
+However, these genes did not yield any results either. Going back to the initial lists of genes, I was able to search each one individually in NBCI/literature to find some information about them. 
+
+    
+    SAUSA300_RS01370: hypothetical protein (no known functional role)
+    SAUSA300_RS08885: hypothetical protein (no known functional role)
+    SAUSA300_RS05720: alpha-hemolysin, viruluence factor, contributes to immune evasion
+    SAUSA300_RS01365: hypothetical protein (no known functional role) 
+    SAUSA300_RS13060: hypothetical protein (no known functional role)
+    SAUSA300_RS09360: hypothetical protein (no known functional role)
+    SAUSA300_RS12780: hypothetical protein (no known functional role)
+    SAUSA300_RS04085: hypothetical protein (no known functional role)
+    SAUSA300_RS03675: hypothetical protein (no known functional role)
+
+Functional analysis of the differentially expressed genes was challenging due to limited annotation of the Staphylococcus aureus genome. Out of 9 differentially expressed genes, I was only able to find a function for one gene, which is a well-characterized virulence factor. I attempted to perform GO enrichment using standard tools with two different sets of gene IDs, which reflects on the lack of bacterial GO annotation as well as differences in gene naming coventions and requirements between databases. Additionally, I think it is interesting to consider how the limited annotation in this (pathogenic) bacterial genome makes it challenging to interpret the treatment effect of sodium propionate. These challenges likely have broader implications in antibiotic and drug research as researchers try to discover the target(s) of their therapeutics. 
+
+
 
 
 
