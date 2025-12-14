@@ -2,9 +2,9 @@
 
 ## About the Makefile and README
 
+This Makefile and README looks at an RNA-sequencing dataset from Staphylococcus aureus. The commands in the Makefile can be run for each SRR/sample to obtain counts data, determine differentially expressed genes, as well as generate a PCA plot and heatmap.
 
-
-## Generating counts data
+## Generating Counts Data
 
 By running the commands below for each SRR and sample, I was able to create one count matrix per SRR/sample combination. I copied and pasted the column with the counts into one csv file titled "counts.csv."
 
@@ -62,7 +62,7 @@ The heatmap shows only the differentially expressed genes. We expect to see unif
 
 ![heatmap](heatmap.png)
 
-## Identifying differentially expressed genes
+## Identifying Differentially Expressed Genes
 
 To identify differentially expressed genes use the command shown below.
 
@@ -81,7 +81,40 @@ This results in the list of genes shown below.
     SAUSA300_RS04085
     SAUSA300_RS03675
 
-I tried using DAVID with this list of genes; however, that did not work. Instead, I searched each of these in NCBI. 
+Due to the annotation and naming convention of these genes, none of the available gene ontology software would work (DAVID, EggNOG, Panther, etc.) What I had to do was go to Ensembl Bacteria and download the FASTA and GFF3 file from there, and repeat certain steps of the analysis to determine feature counts and differentially expressed genes.
+
+## Ensembl PCA and Differentially Expressed Genes
+
+To run all of the codes associated with the Ensembl data, you can run: 
+
+    make get_ensembl_fasta
+    make unzip_ensembl_fasta
+    make get_ensembl_gff
+    make unzip_ensembl_gff
+    make index_ensembl_genome
+    make align_ensembl
+    make feature_counts_ensembl
+    make format_ensembl_counts
+    make process_ensembl_counts
+    make differential_expression_ensembl
+    make generate_ensembl_pca
+
+
+ I also regenerated the PCA plot to verify that the samples were grouped similarly, and they are. There seems to be slightly more variation between the no treatment (NT1-3) groups; however, in general the clustering indicates a difference between the no treatment and treated samples. 
+
+![ensembl_pca](pca_ensembl.png)
+
+After running the make differential_expression_ensembl, I obtained this list of differentially expressed genes:
+
+   ENSB:O8cFsNVn-AOhAka
+   ENSB:3j5CatqyUbyE_RJ
+   ENSB:ORJr3f5Oc2q8UlJ
+   ENSB:TdSUffZ62X05q_0
+   ENSB:L76Ibya6B4Z_ELi
+   ENSB:CaRScD0kNwjveno
+   ENSB:XseMLxqqatMjUI7
+   ENSB:IsEgNezXK0ZAyVR
+   ENSB:Ujsrcn-GdePJHcP
 
 
 
